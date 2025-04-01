@@ -57,7 +57,7 @@ jobs:
             architecture: "aarch64"
             docker_image: "dockcross/linux-arm64-lts:latest"
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
       - name: cxxlib
@@ -145,7 +145,7 @@ jobs:
             node_architecture: "arm64"
             docker_image: ghcr.io/prebuild/linux-arm64-lts:latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
       - name: nodejslib
@@ -177,7 +177,7 @@ jobs:
             --node-architecture ${{ matrix.node_architecture }} \
             --install \
             --install-prefix $(pwd)/dist
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.os_short }}-nodejs-${{ matrix.node_architecture }}
           path: |
@@ -256,7 +256,7 @@ jobs:
             architecture: "aarch64"
             boost_architecture: "arm"
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
       # - name: Cache Boost.Python
@@ -276,12 +276,12 @@ jobs:
           sed -i.bak "s/^version = .*/version = \"${version}\"/g" pyproject.toml && rm pyproject.toml.bak
           echo "${version}" > src/git-tag.txt
       - name: Set up QEMU
-        uses: docker/setup-qemu-action@v2
+        uses: docker/setup-qemu-action@v3
         if: matrix.architecture == 'aarch64'
         with:
           platforms: arm64
       - name: Build wheels
-        uses: pypa/cibuildwheel@v2.11.2
+        uses: pypa/cibuildwheel@v2.32.2
         env:
           CIBW_BUILD: "cp${{ matrix.python_version }}-*"
           CIBW_PLATFORM: "${{ matrix.os_short }}"
@@ -313,7 +313,7 @@ jobs:
       #     if [ -d "boost_1_80_0" ]; then
       #       tar -czf boost-precompiled.tar.gz boost_1_80_0 || true
       #     fi
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.os_short }}-python-${{ matrix.architecture }}
           path: |
@@ -325,7 +325,7 @@ jobs:
     strategy:
       fail-fast: false
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
       - name: emscripten
@@ -339,7 +339,7 @@ jobs:
             --boost-prefix $(pwd) \
             --install \
             --install-prefix $(pwd)/dist
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
           name: emscripten
           path: |
@@ -355,16 +355,16 @@ jobs:
     ]
     runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - uses: actions/download-artifact@v3
+      - uses: actions/download-artifact@v4
         with:
           path: prebuilds
       - name: Setup Node
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
-          node-version: '14.x'
+          node-version: '20.x'
       - name: Publish node.js library
         shell: bash
         env:
@@ -405,10 +405,10 @@ jobs:
     ]
     runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - uses: actions/download-artifact@v3
+      - uses: actions/download-artifact@v4
         with:
           path: prebuilds
       - name: prepare
@@ -437,10 +437,10 @@ jobs:
     ]
     runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - uses: actions/download-artifact@v3
+      - uses: actions/download-artifact@v4
         with:
           path: prebuilds
       - name: prepare
@@ -453,7 +453,7 @@ jobs:
           zip -r dist/windows-cxx-ia32.zip prebuilds/windows-cxx-ia32
           zip -r dist/windows-cxx-x64.zip prebuilds/windows-cxx-x64
       - name: Release
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           files: |
